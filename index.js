@@ -11,6 +11,7 @@ const {
   ScrollView,
   StyleSheet,
   InteractionManager,
+  Image
 } = ReactNative;
 const TimerMixin = require('react-timer-mixin');
 
@@ -220,14 +221,26 @@ const ScrollableTabView = React.createClass({
     let overlayTabs = (this.props.tabBarPosition === 'overlayTop' || this.props.tabBarPosition === 'overlayBottom');
     let tabBarProps = {
       goToPage: this.goToPage,
-      tabs: this._children().map((child) => child.props.tabLabel),
+      tabs: this._children().map((child) => {
+          return {
+              label: child.props.tabLabel,
+              icon:  child.props.tabIcon,
+              style: child.props.tabStyle
+          }
+      }),
       activeTab: this.state.currentPage,
       scrollValue: this.state.scrollValue,
       containerWidth: this.state.containerWidth,
     };
 
+    if (this.props.tabBarUnderlineColor) {
+      tabBarProps.underlineColor = this.props.tabBarUnderlineColor;
+    }
     if (this.props.tabBarBackgroundColor) {
       tabBarProps.backgroundColor = this.props.tabBarBackgroundColor;
+    }
+    if (this.props.tabBarBorderColor) {
+     tabBarProps.borderColor = this.props.tabBarBorderColor;
     }
     if (this.props.tabBarActiveTextColor) {
       tabBarProps.activeTextColor = this.props.tabBarActiveTextColor;
@@ -240,6 +253,9 @@ const ScrollableTabView = React.createClass({
     }
     if (this.props.tabBarUnderlineStyle) {
       tabBarProps.underlineStyle = this.props.tabBarUnderlineStyle;
+    }
+    if (this.props.tabBarUnderlineHeight) {
+      tabBarProps.underlineHeight = this.props.tabBarUnderlineHeight;
     }
     if (overlayTabs) {
       tabBarProps.style = {

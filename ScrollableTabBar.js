@@ -8,6 +8,7 @@ const {
   Text,
   Platform,
   Dimensions,
+  Image
 } = ReactNative;
 const Button = require('./Button');
 
@@ -40,6 +41,7 @@ const ScrollableTabBar = React.createClass({
       tabStyle: {},
       tabsContainerStyle: {},
       underlineStyle: {},
+      underlineHeight: 1
     };
   },
 
@@ -121,22 +123,29 @@ const ScrollableTabBar = React.createClass({
     }
   },
 
-  renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler) {
+  renderTab(tab, page, isTabActive, onPressHandler, onLayoutHandler) {
     const { activeTextColor, inactiveTextColor, textStyle, } = this.props;
     const textColor = isTabActive ? activeTextColor : inactiveTextColor;
     const fontWeight = isTabActive ? 'bold' : 'normal';
 
     return <Button
-      key={`${name}_${page}`}
+      key={`${tab.label}_${page}`}
       accessible={true}
-      accessibilityLabel={name}
+      accessibilityLabel={tab.label}
       accessibilityTraits='button'
       onPress={() => onPressHandler(page)}
       onLayout={onLayoutHandler}
     >
-      <View style={[styles.tab, this.props.tabStyle, ]}>
+      <View style={styles.tab_icon_wrapper}>
+       {
+           tab.icon &&
+           <Image
+               source={{uri: tab.icon}}
+               style={styles.tab_icon}
+           />
+      }
         <Text style={[{color: textColor, fontWeight, }, textStyle, ]}>
-          {name}
+          {tab.label}
         </Text>
       </View>
     </Button>;
@@ -151,8 +160,8 @@ const ScrollableTabBar = React.createClass({
   render() {
     const tabUnderlineStyle = {
       position: 'absolute',
-      height: 4,
-      backgroundColor: 'navy',
+      height: this.props.underlineHeight,
+      backgroundColor: this.props.underlineColor || 'navy',
       bottom: 0,
     };
 
@@ -162,7 +171,10 @@ const ScrollableTabBar = React.createClass({
     };
 
     return <View
-      style={[styles.container, {backgroundColor: this.props.backgroundColor, }, this.props.style, ]}
+      style={[styles.container, {
+          backgroundColor: this.props.backgroundColor,
+          borderBottomColor: this.props.borderColor || null},
+          this.props.style, ]}
       onLayout={this.onContainerLayout}
     >
       <ScrollView
@@ -180,10 +192,10 @@ const ScrollableTabBar = React.createClass({
           ref={'tabContainer'}
           onLayout={this.onTabContainerLayout}
         >
-          {this.props.tabs.map((name, page) => {
+          {this.props.tabs.map((tab, page) => {
             const isTabActive = this.props.activeTab === page;
             const renderTab = this.props.renderTab || this.renderTab;
-            return renderTab(name, page, isTabActive, this.props.goToPage, this.measureTab.bind(this, page));
+            return renderTab(tab, page, isTabActive, this.props.goToPage, this.measureTab.bind(this, page));
           })}
           <Animated.View style={[tabUnderlineStyle, dynamicTabUnderline, this.props.underlineStyle, ]} />
         </View>
@@ -218,14 +230,14 @@ module.exports = ScrollableTabBar;
 
 const styles = StyleSheet.create({
   tab: {
-    height: 49,
+    height: 35,
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 20,
     paddingRight: 20,
   },
   container: {
-    height: 50,
+    height: 36,
     borderWidth: 1,
     borderTopWidth: 0,
     borderLeftWidth: 0,
@@ -236,4 +248,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
+  tab_icon_wrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center'
+  },
+  tab_icon: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      marginRight: 5
+  }
 });
