@@ -36,7 +36,7 @@ const DefaultTabBar = React.createClass({
   renderTab(tab, page, isTabActive, onPressHandler) {
     const { activeTextColor, inactiveTextColor, textStyle, } = this.props;
     const textColor = isTabActive ? activeTextColor : inactiveTextColor;
-    const fontWeight = isTabActive ? 'bold' : 'normal';
+    const fontWeight = 'normal';
 
     return <Button
       style={{flex: 1, }}
@@ -86,6 +86,13 @@ const DefaultTabBar = React.createClass({
           const renderTab = this.props.renderTab || this.renderTab;
           return renderTab(tab, page, isTabActive, this.props.goToPage);
         })}
+        <View style={[{
+          position: 'absolute',
+          width: containerWidth,
+          height: 1,
+          backgroundColor: '#f4f4f4',
+          bottom: 0,
+        }]} />
         <Animated.View style={[tabUnderlineStyle, { left, }, this.props.underlineStyle, ]} />
       </View>
     );
