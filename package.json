@@ -1,6 +1,6 @@
 {
   "name": "react-native-scrollable-tab-view",
-  "version": "0.7.0",
+  "version": "0.7.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/brentvatne/react-native-scrollable-tab-view#readme",
   "dependencies": {
+    "react-static-container": "^1.0.1",
     "react-timer-mixin": "^0.13.3"
   },
   "devDependencies": {

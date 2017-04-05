@@ -11,7 +11,8 @@ const {
   ScrollView,
   StyleSheet,
   InteractionManager,
-  Image
+  Image,
+  Platform,
 } = ReactNative;
 const TimerMixin = require('react-timer-mixin');
 
@@ -56,12 +57,30 @@ const ScrollableTabView = React.createClass({
   },
 
   getInitialState() {
+    const width = Dimensions.get('window').width;
     return {
       currentPage: this.props.initialPage,
+      scrollX: new Animated.Value(this.props.initialPage * width),
       scrollValue: new Animated.Value(this.props.initialPage),
-      containerWidth: Dimensions.get('window').width,
+      containerWidth: width,
       sceneKeys: this.newSceneKeys({ currentPage: this.props.initialPage, }),
     };
+  },
+
+  componentDidMount() {
+    this.setTimeout(() => {
+      InteractionManager.runAfterInteractions(() => {
+        if (Platform.OS === 'android') {
+          this.goToPage(this.props.initialPage, false);
+        }
+      });
+    }, 0);
+
+    this.state.scrollX.addListener(({ value, }) => {
+      const scrollValue = value / this.state.containerWidth;
+      this.state.scrollValue.setValue(scrollValue);
+      this.props.onScroll(scrollValue);
+    });
   },
 
   componentWillReceiveProps(props) {
@@ -74,10 +93,10 @@ const ScrollableTabView = React.createClass({
     }
   },
 
-  goToPage(pageNumber) {
+  goToPage(pageNumber, animated = !this.props.scrollWithoutAnimation) {
     const offset = pageNumber * this.state.containerWidth;
-    if (this.scrollView) {
-      this.scrollView.scrollTo({x: offset, y: 0, animated: !this.props.scrollWithoutAnimation, });
+    if (this.scrollView && this.scrollView._component && this.scrollView._component.scrollTo) {
+      this.scrollView._component.scrollTo({x: offset, y: 0, animated, });
     }
 
     const currentPage = this.state.currentPage;
@@ -130,16 +149,19 @@ const ScrollableTabView = React.createClass({
 
   renderScrollableContent() {
     const scenes = this._composeScenes();
-    return <ScrollView
+    return <Animated.ScrollView
       horizontal
       pagingEnabled
       automaticallyAdjustContentInsets={false}
       contentOffset={{ x: this.props.initialPage * this.state.containerWidth, }}
       ref={(scrollView) => { this.scrollView = scrollView; }}
-      onScroll={(e) => {
-        const offsetX = e.nativeEvent.contentOffset.x;
-        this._updateScrollValue(offsetX / this.state.containerWidth);
-      }}
+      onScroll={
+        Animated.event([{
+              nativeEvent: { contentOffset: { x: this.state.scrollX } }
+            }], {
+              useNativeDriver: true,
+            })
+      }
       onMomentumScrollBegin={this._onMomentumScrollBeginAndEnd}
       onMomentumScrollEnd={this._onMomentumScrollBeginAndEnd}
       scrollEventThrottle={16}
@@ -152,7 +174,7 @@ const ScrollableTabView = React.createClass({
       {...this.props.contentProps}
       >
       {scenes}
-    </ScrollView>;
+    </Animated.ScrollView>;
   },
 
   _composeScenes() {
@@ -197,11 +219,6 @@ const ScrollableTabView = React.createClass({
     });
   },
 
-  _updateScrollValue(value) {
-    this.state.scrollValue.setValue(value);
-    this.props.onScroll(value);
-  },
-
   _handleLayout(e) {
     const { width, } = e.nativeEvent.layout;
 
@@ -229,6 +246,7 @@ const ScrollableTabView = React.createClass({
           }
       }),
       activeTab: this.state.currentPage,
+      scrollX: this.state.scrollX,
       scrollValue: this.state.scrollValue,
       containerWidth: this.state.containerWidth,
     };

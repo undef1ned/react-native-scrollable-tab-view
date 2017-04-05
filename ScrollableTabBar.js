@@ -8,6 +8,7 @@ const {
   Text,
   Platform,
   Dimensions,
+  I18nManager,
   Image
 } = ReactNative;
 const Button = require('./Button');
@@ -29,6 +30,7 @@ const ScrollableTabBar = React.createClass({
     textStyle: Text.propTypes.style,
     renderTab: React.PropTypes.func,
     underlineStyle: View.propTypes.style,
+    onScroll:React.PropTypes.func,
   },
 
   getDefaultProps() {
@@ -165,10 +167,11 @@ const ScrollableTabBar = React.createClass({
       bottom: 0,
     };
 
+    const key = I18nManager.isRTL ? 'right' : 'left';
     const dynamicTabUnderline = {
-      left: this.state._leftTabUnderline,
-      width: this.state._widthTabUnderline,
-    };
+      [`${key}`]: this.state._leftTabUnderline,
+      width: this.state._widthTabUnderline
+    }
 
     return <View
       style={[styles.container, {
@@ -184,6 +187,7 @@ const ScrollableTabBar = React.createClass({
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         directionalLockEnabled={true}
+        onScroll={this.props.onScroll}
         bounces={false}
         scrollsToTop={false}
       >
