@@ -8,22 +8,9 @@ const {
 } = ReactNative;
 const Button = require('./Button');
 
-const PropTypes = require('prop-types');
 const createReactClass = require('create-react-class');
 
 const DefaultTabBar = createReactClass({
-  propTypes: {
-    goToPage: PropTypes.func,
-    activeTab: PropTypes.number,
-    tabs: PropTypes.array,
-    backgroundColor: PropTypes.string,
-    activeTextColor: PropTypes.string,
-    inactiveTextColor: PropTypes.string,
-    textStyle: Text.propTypes.style,
-    tabStyle: View.propTypes.style,
-    renderTab: PropTypes.func,
-    underlineStyle: View.propTypes.style,
-  },
 
   getDefaultProps() {
     return {

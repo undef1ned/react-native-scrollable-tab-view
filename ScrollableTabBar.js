@@ -18,22 +18,6 @@ const PropTypes = require('prop-types');
 const createReactClass = require('create-react-class');
 
 const ScrollableTabBar = createReactClass({
-  propTypes: {
-    goToPage: PropTypes.func,
-    activeTab: PropTypes.number,
-    tabs: PropTypes.array,
-    backgroundColor: PropTypes.string,
-    activeTextColor: PropTypes.string,
-    inactiveTextColor: PropTypes.string,
-    scrollOffset: PropTypes.number,
-    style: View.propTypes.style,
-    tabStyle: View.propTypes.style,
-    tabsContainerStyle: View.propTypes.style,
-    textStyle: Text.propTypes.style,
-    renderTab: PropTypes.func,
-    underlineStyle: View.propTypes.style,
-    onScroll:PropTypes.func,
-  },
 
   getDefaultProps() {
     return {
