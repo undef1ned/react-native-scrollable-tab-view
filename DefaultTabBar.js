@@ -86,7 +86,7 @@ const DefaultTabBar = createReactClass({
           position: 'absolute',
           width: containerWidth,
           height: 1,
-          backgroundColor: '#f4f4f4',
+          backgroundColor: this.props.borderColor || '#f4f4f4',
           bottom: 0,
         }]} />
         <Animated.View style={[tabUnderlineStyle, { left, }, this.props.underlineStyle, ]} />
